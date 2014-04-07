@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>がんばれ！アドミンくん － @Cheater</title>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="https://raw.githubusercontent.com/padolsey/jquery.fn/master/cross-domain-ajax/jquery.xdomainajax.js"></script>
+	<script type="text/javascript">
+		$(function() {
+			$.ajax({
+				url: 'http://www.atmarkit.co.jp/fwin2k/itpropower/admin-kun/index/index.html',
+				type: 'GET',
+				success: function(data) {
+					$('#debug').html(data.responseText);
+					$('.backbox table tbody tr td a', $('#debug')).each(function(){
+						$imgpath = $(this).attr("href").replace(/http:\/\/www\.atmarkit\.co\.jp\/ait\/articles\/(.*)\/news...\.html/g, '$1');
+						if ($(this).attr("href") == $imgpath) {
+							$imgpath = $imgpath.replace(/\/fwin2k\/itpropower\/admin-kun\/(.*)\/admin.*/g, 'http://www.atmarkit.co.jp/fwin2k/itpropower/admin-kun/$1/admin$1_l.gif');
+							if ($imgpath.indexOf("001_l.gif")!=-1) { $imgpath = $imgpath.replace(/001_l.gif/g, '001l.gif')};
+						} else {
+							$number = $(this).text().replace(/第(.+?)話.*$/g, '$1');
+							$imgpath = $imgpath.replace(/^(.*)$/g, 'http://image.itmedia.co.jp/ait/articles/$1/wi-admin').concat($number+"_l.gif");
+						}
+						$t = document.createElement("img");
+						$t.src = $imgpath
+						$("#result").append($t);
+					});
+				}
+			});
+		}); 
+	</script>
+</head>
+<body>
+	<div id="debug" style="display:none;"></div>
+	<div id="result"></div>
+</body>
+</html>
