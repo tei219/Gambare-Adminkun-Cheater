@@ -1,8 +1,9 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML>
 <html>
 <head>
+	<meta charset="Shift_JIS" />
 	<title>がんばれ！アドミンくん － @Cheater</title>
-	<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
 	<script type="text/javascript" src="https://raw.githubusercontent.com/padolsey/jquery.fn/master/cross-domain-ajax/jquery.xdomainajax.js"></script>
 	<script type="text/javascript">
 		$(function() {
@@ -11,17 +12,34 @@
 				type: 'GET',
 				success: function(data) {
 					$('#debug').html(data.responseText);
-					$('.backbox table tbody tr td a', $('#debug')).each(function(){
-						$imgpath = $(this).attr("href").replace(/http:\/\/www\.atmarkit\.co\.jp\/ait\/articles\/(.*)\/news...\.html/g, '$1');
-						if ($(this).attr("href") == $imgpath) {
-							$imgpath = $imgpath.replace(/\/fwin2k\/itpropower\/admin-kun\/(.*)\/admin.*/g, 'http://www.atmarkit.co.jp/fwin2k/itpropower/admin-kun/$1/admin$1_l.gif');
-							if ($imgpath.indexOf("001_l.gif")!=-1) { $imgpath = $imgpath.replace(/001_l.gif/g, '001l.gif')};
-						} else {
-							$number = $(this).text().replace(/第(.+?)話.*$/g, '$1');
-							$imgpath = $imgpath.replace(/^(.*)$/g, 'http://image.itmedia.co.jp/ait/articles/$1/wi-admin').concat($number+"_l.gif");
+					$('#adminkun-back-numbers div', $('#debug')).each(function(){
+						$imgpath = $('a', $(this)).attr("href");
+						$title = $('h4', $(this)).text();
+						$num = ('00' + $title.replace(/第(.+?)話.*$/g, '$1')).slice(-3);
+						$directory = "";
+						switch (true) {
+							case (parseInt($num) > 0 && parseInt($num) <= 1):
+								$imgpath = ('http://www.atmarkit.co.jp/fwin2k/itpropower/admin-kun/' + $num + '/admin' + $num + 'l.gif');
+								break;
+							case (parseInt($num) > 1 && parseInt($num) <= 334):
+								$imgpath = ('http://www.atmarkit.co.jp/fwin2k/itpropower/admin-kun/' + $num + '/admin' + $num + '_l.gif');
+								break;
+							case (parseInt($num) > 334 && parseInt($num) <= 441):
+								$directory = $imgpath.replace(/^.*articles\/(\d\d\d\d\/\d\d\/)news.*$/g, '$1');
+								$imgpath = ('http://image.itmedia.co.jp/ait/articles/' + $directory + '/wi-admin' + $num + '_l.gif');
+								break;
+							case (parseInt($num) > 441 && parseInt($num) <= 999):
+								$directory = $imgpath.replace(/^.*articles\/(\d\d\d\d\/\d\d\/)news.*$/g, '$1');
+								$imgpath = ('http://image.itmedia.co.jp/ait/articles/' + $directory + '/wi-admin' + $num + '_l.png');
+								break;
+							default:
+								$imgpath = "";
+								break;
 						}
+						
 						$t = document.createElement("img");
-						$t.src = $imgpath
+						$t.src = $imgpath;
+						$t.title = $title+" "+$num+" "+$directory;
 						$("#result").append($t);
 					});
 				}
